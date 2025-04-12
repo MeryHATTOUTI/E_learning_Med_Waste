@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de connaissances</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .question p {
+            font-weight: bold;
+        }
+
+        .choices label {
+            display: block;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        button {
+            display: inline-block;
+            margin: 30px 10px 0 10px;
+            padding: 10px 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        #workerNameInput {
+            margin-bottom: 20px;
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .logo {
+            width: 50px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Test de connaissances</h2>
+        <p>L'efficacité est le résultat d'une organisation fluide et de l'attention portée à chaque détail</p>
+    </header>
+    <div class="container">
+        <form id="quizForm">
+            <input type="text" id="workerNameInput" placeholder="Entrez le nom de l'ouvrier" required />
+            <!-- Conteneur pour insérer dynamiquement les questions -->
+            <div id="questions"></div>
+
+            <!-- Boutons d'action -->
+            <button type="button" onclick="calculateScore()">Valider</button>
+            <button type="button" onclick="generateCertificate()">Télécharger le certificat</button>
+
+            <div id="result"></div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const questions = [
+            ["Que faut-il vérifier avant de charger le camion ?", ["La météo", "Le matériel et les papiers nécessaires", "Le niveau de gasoil"], 1],
+            ["Où les conteneurs sont-ils transférés après leur déchargement ?", ["Sur le trottoir", "Sur des chariots", "Dans la chambre froide"], 1],
+            ["Que faut-il faire avant de quitter le site du client ?", ["Vérification du matériel et photos", "Prendre une pause", "Revenir à l'entreprise"], 0],
+            ["À quelle température les déchets doivent-ils être traités ?", ["90°C", "110°C", "138°C"], 2],
+            ["Quelle est la durée maximale de traitement recommandée ?", ["60 minutes", "30 minutes", "15 minutes"], 1],
+            ["Quelle est la fonction principale de la couche absorbante ?", ["Absorber les odeurs", "Absorber l'humidité pour accélérer le traitement", "Faire joli"], 1],
+            ["Quand doit-on prendre les photos de suivi ?", ["Avant traitement seulement", "Après traitement seulement", "Avant et après traitement"], 2],
+            ["Quel élément doit-on toujours avoir dans le camion ?", ["Un extincteur", "Des fleurs", "Un drapeau"], 0],
+            ["Que faire en cas de déversement de liquide ?", ["Ignorer", "Nettoyer et signaler", "Cacher"], 1],
+            ["Quelle application est utilisée pour le suivi ?", ["WhatsApp", "Une application dédiée de l'entreprise", "Facebook"], 1],
+            ["Combien de photos doivent être prises pour chaque site ?", ["Une seule", "Deux minimum", "Aucune"], 1],
+            ["Où faut-il stocker les sharp box après déchargement ?", ["À côté de la machine", "Dans les bennes", "Dans un local sécurisé"], 2],
+            ["Que faut-il faire en cas de doute sur un chargement ?", ["Ne rien faire", "Appeler un collègue", "Demander au superviseur"], 2],
+            ["Quel est le rôle des chariots ?", ["Transport de matériel", "Déplacement facile des conteneurs", "Ornement"], 1],
+            ["Quand faut-il laver les mains ?", ["Avant chaque repas", "Après manipulation de déchets", "Jamais"], 1],
+            ["Pourquoi utiliser une charte qualité ?", ["Faire joli", "Assurer la traçabilité et le bon déroulement", "Pour gagner du temps"], 1],
+            ["Quel type de déchet doit être isolé ?", ["Papier", "Déchets médicaux dangereux", "Verre"], 1],
+            ["Quel équipement de sécurité est obligatoire ?", ["Casque audio", "Chaussures de sécurité", "Casquette"], 1],
+            ["Que faut-il faire si un conteneur est endommagé ?", ["Continuer quand même", "Réparer sur place", "Signaler immédiatement"], 2],
+            ["Quand doit-on remplir le rapport de mission ?", ["Chaque fin de journée", "Une fois par semaine", "Jamais"], 0],
+            ["Comment améliorer le temps de traitement ?", ["Baisser la température", "Augmenter la température et la vitesse", "Utiliser plus d'eau"], 1],
+            ["Que contient un kit d'intervention d'urgence ?", ["Stylos", "Produits désinfectants et gants", "Jouets"], 1],
+            ["Comment gérer un refus de chargement par un client ?", ["Forcer le chargement", "Informer le responsable", "Ignorer"], 1],
+            ["Où faut-il déposer les bennes une fois pleines ?", ["Dans la rue", "Zone de stockage définie", "Parking"], 1],
+            ["Quel est le rôle du superviseur ?", ["Regarder seulement", "Superviser et coordonner les tâches", "Distribuer des cafés"], 1],
+            ["Quand le chauffeur doit-il faire le plein ?", ["Quand il a le temps", "Avant la première tournée", "Quand il n’y a plus d’essence"], 1],
+            ["Quel document est signé à chaque collecte ?", ["Facture", "Bon de collecte", "Carte d'identité"], 1],
+            ["Que faut-il faire des déchets liquides ?", ["Jeter dans l’évier", "Stocker dans des contenants sécurisés", "Verser dans les bennes"], 1],
+            ["Que faire en cas d'accident ?", ["Fuir", "Signaler immédiatement et sécuriser la zone", "Continuer comme si de rien n'était"], 1],
+            ["Pourquoi prendre des photos à chaque étape ?", ["Pour garder des souvenirs", "Pour assurer la traçabilité", "Parce que c’est obligatoire"], 1]
+        ];
+
+
+        const questionsContainer = document.getElementById("questions");
+
+        questions.forEach((q, index) => {
+            const div = document.createElement("div");
+            div.classList.add("question");
+            div.innerHTML = `
+                <p>${index + 1}. ${q[0]}</p>
+                <div class="choices">
+                    ${q[1].map((choice, i) => `
+                        <label><input type="radio" name="q${index + 1}" value="${i === q[2] ? 1 : 0}"> ${choice}</label>
+                    `).join('')}
+                </div>
+            `;
+            questionsContainer.appendChild(div);
+        });
+
+        let score = 0;
+
+        function calculateScore() {
+    score = 0;
+    let unanswered = false;
+    for (let i = 1; i <= questions.length; i++) {
+        const answer = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!answer) {
+            unanswered = true;
+            break;
+        }
+        score += parseInt(answer.value);
+    }
+    if (unanswered) {
+        alert("Veuillez répondre à toutes les questions.");
+        return;
+    }
+    const percentage = (score / questions.length) * 100;
+    document.getElementById("result").innerText = `Votre score est de ${percentage.toFixed(0)}%`;
+}
+        async function generateCertificate() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const name = document.getElementById("workerNameInput").value.trim();
+
+            if (!name) {
+                alert("Veuillez saisir le nom de l'ouvrier avant de générer le certificat.");
+                return;
+            }
+
+            // Ajout du logo de l'entreprise
+            const logo = 'med_waste_cover.jpg'; // Remplacez par l'URL de votre logo
+            doc.addImage(logo, 'JPEG', 15, 10, 50, 30);
+
+            // Titre et texte
+            doc.setFontSize(25);
+            doc.setTextColor(44, 62, 80);
+            doc.text("Certificat de Formation", 80, 50);
+
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Nous certifions que ${name}`, 20, 70);
+            doc.text("a bien suivi et réussi la formation sur les procédures de sécurité", 20, 80);
+            doc.text("liées au traitement et au transport des déchets médicaux.", 20, 90);
+
+            // Affichage du score dans le certificat
+            const scorePercentage = (score / questions.length) * 100;
+            doc.text(`Score obtenu : ${scorePercentage.toFixed(0)}%`, 20, 110);
+
+            // Date et signature
+            doc.setFontSize(12);
+            doc.text("Fait le : " + new Date().toLocaleDateString(), 20, 130);
+            doc.text("Signature du responsable qualité :", 20, 140);
+
+            doc.line(20, 145, 100, 145); // ligne de signature
+
+            // Bordure autour du certificat
+            doc.setLineWidth(1);
+            doc.rect(10, 5, 190, 287);
+
+            // Sauvegarde du certificat
+            doc.save(`certificat_${name.replaceAll(" ", "_")}.pdf`);
+        }
+    </script>
+</body>
+</html>

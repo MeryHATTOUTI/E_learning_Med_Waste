@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les étapes de collecte</title>
+    <link rel="stylesheet" href="receptionstyles.css">
+</head>
+<body>
+    <header>
+        <img src="med_waste_cover.jpg" alt="Logo de l'entreprise" class="logo">
+        <blockquote class="quote">L'efficacité est le résultat d'une organisation fluide et de l'attention portée à chaque détail</blockquote>
+        <a href="index.html" class="home-icon">
+            <h3>Retour à l'accueil</h3>
+        </a>
+    </header>
+    <main>
+        <h1>Les étapes de collecte</h1>
+        <div class="steps-container">
+            <button id="prevStep">⬅️</button>
+
+            <div class="step" id="step1">
+                <img src="zone de préparation.png" alt="Charger le camion">
+                <img src="C1.png" alt="Charger le camion">
+                <p><strong>Charger le camion :</strong> Après vérification du matériel et des documents, charger les bennes préparées dans le camion.</p>
+            </div>
+
+            <div class="step" id="step2">
+                <img src="Peser sur la balance .png" alt="Pesée chez le client">
+                <p><strong>Peser les déchets à l’arrivée :</strong> Peser les déchets à bord du camion. <br><em><strong>Attention :</strong></em> Effectuer la tare et ne pas descendre la balance du camion.</p>
+            </div>
+
+            <div class="step" id="step3">
+                <img src="C2.png" alt="Scan codes-barres">
+                <p><strong>Scanner les bennes :</strong> Pendant la pesée, un autre employé scanne les codes-barres lors du dépôt des nouvelles bennes.</p>
+            </div>
+
+            <div class="step" id="step4">
+                <img src="C3.png" alt="Impression des bons">
+                <p><strong>Imprimer les bons de collecte et de tournée :</strong> Remettre les bons au médecin pour signature.<br><em>Attention :</em> Ne pas insister pour le cachet ni imprimer chez le client.</p>
+            </div>
+
+            <div class="step" id="step5">
+                <img src="C4.png" alt="Vérification finale">
+                <p><strong>Vérification et photos :</strong> Effectuer une dernière vérification du matériel et prendre des photos avant/après l’enlèvement.</p>
+            </div>
+
+            <div class="step" id="step6">
+                <img src="C5.png" alt="Ravitaillement en gasoil">
+                <p><strong>Ravitaillement en gasoil :</strong> Prendre une photo du tableau de bord, du distributeur, et du bon de gasoil.</p>
+            </div>
+
+            <div class="step" id="step7">
+                <img src="C6.png" alt="Retour à l'entreprise">
+                <p><strong>Retour à l’entreprise :</strong> Prendre une photo du tableau de bord, noter l’heure de retour et remplir la fiche de retour.</p>
+            </div>
+
+            <button id="nextStep">➡️</button>
+        </div>
+    </main>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+
+        document.getElementById('prevStep').addEventListener('click', () => {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).style.display = 'none';
+                currentStep--;
+                document.getElementById(`step${currentStep}`).style.display = 'block';
+            }
+        });
+
+        document.getElementById('nextStep').addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).style.display = 'none';
+                currentStep++;
+                document.getElementById(`step${currentStep}`).style.display = 'block';
+            }
+        });
+
+        document.querySelectorAll('.step').forEach((step, index) => {
+            if (index !== 0) step.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
